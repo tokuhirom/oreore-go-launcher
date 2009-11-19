@@ -1,6 +1,6 @@
 include $(GOROOT)/src/Make.$(GOARCH)
 
-TARG=gorun
-GOFILES=gorun.go
+TARG=g
+GOFILES=g.go
 
 include $(GOROOT)/src/Make.cmd
