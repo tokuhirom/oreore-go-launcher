@@ -1,0 +1,4 @@
+go executer for Golang.
+
+Usage: g foo.go
+j
