@@ -73,17 +73,13 @@ func run_one_line(line string) {
     io.WriteFile(fname, strings.Bytes(src), 0600);
     out, succeeded := compile(fname);
     if succeeded {
-        files := make([]*os.File, 3);
-        files[0] = os.Stdin;
-        files[1] = os.Stdout;
-        files[2] = os.Stderr;
+        files := []*os.File {os.Stdin, os.Stdout, os.Stderr};
         pid, err := os.ForkExec(out, make([]string, 0), os.Environ(), "", files);
         if err != nil {
             log.Stderr(err, "\n");
             return;
-        } else {
-            os.Wait(pid, 0);
         }
+        os.Wait(pid, 0);
     } else {
         log.Stderr("compilation error\n");
     }
