@@ -9,37 +9,37 @@ import (
     "strings";
 );
 
+var archmap = map[string] string {
+    "386":  "8",
+    "amd64":"6",
+    "arm":  "5",
+};
+
+func run(tmpl string, v ...) int {
+    cmd := fmt.Sprintf(tmpl, v);
+    return system.System(cmd);
+}
+
 func compile(src string) (string, bool) {
-    arch := func () string {
-        archtype := os.Getenv("GOARCH");
-        switch {
-        case archtype=="386":
-            return "8"
-        case archtype=="amd64":
-            return "6";
-        case archtype=="arm":
-            return "5";
-        case archtype=="":
-            log.Exit("Cannot get a environment variable $GOARCH");
-        default:
-            log.Exit("unknown archtecture : ", archtype);
-        };
-        return ""; // should not reach here
-    }();
+    arch, ok := archmap[os.Getenv("GOARCH")];
+    if !ok {
+        log.Exit("invalid environment variable $GOARCH");
+    }
     obj := func() string {
         if src[len(src)-3:len(src)] == ".go" {
             return src[0:len(src)-2] + arch;
         }
-        return src + ".go";
+        return src + "." + arch;
     }();
-    linker := arch + "l";
-    compiler := arch + "g";
-    out := arch + ".out";
+    out      := arch + ".out";
 
-    if system.System(compiler + " -o " + obj + " " +  src + " && " + linker + " -o " + out + " " + obj) == 0 {
-        return out, true;
+    if run("%s -o %s %s", arch+"g", obj,  src) != 0 {
+        return "", false;
     }
-    return "", false;
+    if run("%s -o %s %s", arch+"l", out,  obj) != 0 {
+        return "", false;
+    }
+    return out, true;
 }
 
 func run_interpreter() {
