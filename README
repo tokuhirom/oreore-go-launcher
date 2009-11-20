@@ -2,3 +2,8 @@ go executer for Golang.
 
 Usage: g foo.go
 
+Dependencies:
+
+    http://github.com/tokuhirom/go-system
+    http://www.cs.hmc.edu/~me/readline-go/
+
